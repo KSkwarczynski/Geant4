@@ -9,6 +9,7 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
+#include "G4ParticleTable.hh"
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
@@ -21,12 +22,13 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
   private:
         void SetUpDefault();
-        G4ThreeVector GenerateIsotropicDirection( G4double thetaMin = 0, G4double thetaMax = M_PI, G4double phiMin=0, G4double phiMax=2.*M_PI );
-        void GeneratePositronIncident(G4Event* anEvent);
         G4ParticleGun* particleGun;
+        G4ParticleTable* particleTable;
+        void GenerateProtonIncident(G4Event* anEvent);
 
 };
 
 
-#endif 
+#endif
+
 
