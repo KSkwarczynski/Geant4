@@ -46,10 +46,12 @@ G4VPhysicalVolume* DetectorConstruction::ConstructWorld()
     G4double worldX = 10.*m;
     G4double worldY = 10.*m;
     G4double worldZ = 10.*m;
-    G4Material* vaccum = new G4Material("GalacticVacuum", 1., 1.01*g/mole,CLHEP::universe_mean_density,kStateGas, 3.e-18*pascal, 2.73*kelvin);
+
+    G4Material* Air = materials->FindOrBuildMaterial("G4_AIR");
+
 
     G4Box* worldSolid = new G4Box("worldSolid",worldX,worldY,worldZ);
-    worldLogic = new G4LogicalVolume(worldSolid, vaccum,"worldLogic", 0,0,0);
+    worldLogic = new G4LogicalVolume(worldSolid, Air,"worldLogic", 0,0,0);
 
     //worldLogic->SetVisAttributes(G4VisAttributes::Invisible);
     G4VPhysicalVolume* worldPhys = new G4PVPlacement(0, G4ThreeVector(), worldLogic, "world", 0, false, 0);
@@ -97,19 +99,23 @@ void DetectorConstruction::ConstructCube()
 
     G4ThreeVector HolePos3(0, -1.5*mm, -1.5*mm);
     new G4PVPlacement(RotY, HolePos3, HoleLog, "Hole", CubeLogVol, 0, 2);
-
-	G4ThreeVector Cubepos(0, 0, 0);
-	new G4PVPlacement(0, Cubepos, CubeLogVol, "Cube", worldLogic, 0, 0);
+    int nrOfDetsZ=10; //Not final value
+    for(int i = 0; i< nrOfDetsZ; ++i)
+    {
+        G4ThreeVector Cubepos(0, 0, -i*1*cm);
+        new G4PVPlacement(0, Cubepos, CubeLogVol, "Cube", worldLogic, 0, i);
+    }
 }
 
 
 G4LogicalVolume* DetectorConstruction::ConstructWLS( G4double radiusMin, G4double radiusMax, G4double length)
 {
-    G4Material* vaccum = new G4Material("GalacticVacuum", 1., 1.01*g/mole,CLHEP::universe_mean_density,kStateGas, 3.e-18*pascal, 2.73*kelvin);
+
+    G4Material* Air = materials->FindOrBuildMaterial("G4_AIR");
 
     G4Tubs* WLSSolid = new G4Tubs("WLSSolid", radiusMin, radiusMax+0.25*mm, length, 0*deg, 360*deg);
 
-    WLSLogVol = new G4LogicalVolume(WLSSolid, vaccum, "WLSLogVol");
+    WLSLogVol = new G4LogicalVolume(WLSSolid, Air, "WLSLogVol");
 
     G4VisAttributes* WLSVisAtt = new G4VisAttributes( G4Colour::White() );
 	WLSVisAtt->SetForceAuxEdgeVisible(true);// Can see outline when drawn with lines
@@ -141,4 +147,5 @@ void DetectorConstruction::ConstructSDandField()
 {
 //pozniej beda tu detektory
 }
+
 
