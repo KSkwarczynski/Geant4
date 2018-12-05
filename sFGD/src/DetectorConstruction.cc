@@ -43,9 +43,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 G4VPhysicalVolume* DetectorConstruction::ConstructWorld()
 {
 
-    G4double worldX = 10.*m;
-    G4double worldY = 10.*m;
-    G4double worldZ = 10.*m;
+    G4double worldX = 2*m;
+    G4double worldY = 2*m;
+    G4double worldZ = 2*m;
 
     G4Material* Air = materials->FindOrBuildMaterial("G4_AIR");
 
@@ -130,7 +130,7 @@ G4LogicalVolume* DetectorConstruction::ConstructWLSfiber(G4double radiusMin, G4d
 
     G4Element* C = materials->FindOrBuildElement("C");
     G4Element* H = materials->FindOrBuildElement("H");
-    G4Material* WLSmat = new G4Material("WLSmat", 1.0591*g/cm3, 46); //1,4-Bis(2-methylstyryl)benzol
+    G4Material* WLSmat = new G4Material("WLSmat", 1.0591*g/cm3, 2);//1,4-Bis(2-methylstyryl)benzol
     WLSmat->AddElement(C, 24);
     WLSmat->AddElement(H, 22);
 
@@ -147,5 +147,4 @@ void DetectorConstruction::ConstructSDandField()
 {
 //pozniej beda tu detektory
 }
-
 
