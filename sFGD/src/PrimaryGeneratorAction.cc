@@ -17,6 +17,7 @@
 PrimaryGeneratorAction::PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAction()
 {
     particleGun = new G4ParticleGun();
+    particleTable = G4ParticleTable::GetParticleTable();
 	SetUpDefault();
 }
 
@@ -43,43 +44,20 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     //particleGun->SetParticleMomentumDirection(GenerateIsotropicDirection());
     //particleGun->GeneratePrimaryVertex(anEvent);
 
-    GeneratePositronIncident(anEvent);
+    GenerateProtonIncident(anEvent);
 }
 
-G4ThreeVector PrimaryGeneratorAction::GenerateIsotropicDirection(G4double thetaMin,
-                                      G4double thetaMax, G4double phiMin, G4double phiMax){
 
+void PrimaryGeneratorAction::GenerateProtonIncident(G4Event* anEvent){
 
-    if(thetaMin < 0 || thetaMin > 2.*M_PI || thetaMax < 0 || thetaMax > 2.*M_PI){
-        std::cout<<  " tangles not in the limits"<< std::endl;
-        return G4ThreeVector(0,0,0);
-    }
+	G4ParticleDefinition* particle = particleTable->FindParticle("proton");
+	particleGun->SetParticleDefinition(particle);
 
-    if(thetaMin >= thetaMax){
-        std::cout <<  " theta min has to be smaller than theta max "<< std::endl;
-        return G4ThreeVector(0,0,0);
-    }
-
-    G4double randomPhi = G4UniformRand()*(phiMax - phiMin) + phiMin;
-    G4double cosThetaMin = cos(thetaMin);
-    G4double cosThetaMax = cos(thetaMax);
-    G4double randomCosTheta = G4UniformRand()*(cosThetaMin-cosThetaMax)+cosThetaMax;
-    G4double randomTheta = acos(randomCosTheta);
-
-    G4double x = sin(randomTheta)*cos(randomPhi);
-    G4double y = sin(randomTheta)*sin(randomPhi);
-    G4double z = randomCosTheta;
-    G4ThreeVector randDir = G4ThreeVector( x, y, z );
-    return randDir;
-    }
-
-void PrimaryGeneratorAction::GeneratePositronIncident(G4Event* anEvent){
-    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-    G4ParticleDefinition* particle = particleTable->FindParticle("e+");
     particleGun->SetParticleDefinition(particle);
-    particleGun->SetParticlePosition(G4ThreeVector(0.0*cm,0.0*cm,0.0*cm));
-    particleGun->SetParticleMomentumDirection( GenerateIsotropicDirection() );
-    particleGun->SetParticleEnergy(587.0*keV);
+    particleGun->SetParticlePosition(G4ThreeVector(0*cm,0*cm,1*m));
+    particleGun->SetParticleMomentumDirection( G4ThreeVector( 0, 0, 1 ) );
+    particleGun->SetParticleEnergy(2.0*MeV);
     particleGun->GeneratePrimaryVertex(anEvent);
 }
+
 
