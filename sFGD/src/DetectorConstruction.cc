@@ -43,9 +43,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 G4VPhysicalVolume* DetectorConstruction::ConstructWorld()
 {
 
-    G4double worldX = 2*m;
-    G4double worldY = 2*m;
-    G4double worldZ = 2*m;
+    G4double worldX = 8*m;
+    G4double worldY = 8*m;
+    G4double worldZ = 8*m;
 
     G4Material* Air = materials->FindOrBuildMaterial("G4_AIR");
 
@@ -99,11 +99,21 @@ void DetectorConstruction::ConstructCube()
 
     G4ThreeVector HolePos3(0, -1.5*mm, -1.5*mm);
     new G4PVPlacement(RotY, HolePos3, HoleLog, "Hole", CubeLogVol, 0, 2);
-    int nrOfDetsZ=10; //Not final value
-    for(int i = 0; i< nrOfDetsZ; ++i)
+    int optymalization=4; //default equals 1, decrease nr. of cubes for optymalization
+    int nrOfDetsZ=48;
+    int nrOfDetsX=24/optymalization;
+    int nrOfDetsY=8/optymalization;    // 9216 cubes: 48 x 24 x 8 (depth, width, height).
+
+    for(int y = 0; y< nrOfDetsY; ++y)
     {
-        G4ThreeVector Cubepos(0, 0, -i*1*cm);
-        new G4PVPlacement(0, Cubepos, CubeLogVol, "Cube", worldLogic, 0, i);
+        for(int x = 0; x< nrOfDetsX; ++x)
+        {
+            for(int z = 0; z< nrOfDetsZ; ++z)
+            {
+                G4ThreeVector Cubepos( (x*1-12/(optymalization) )*cm, (y*1-4/(optymalization) )*cm, -z*1*cm );
+                new G4PVPlacement(0, Cubepos, CubeLogVol, "Cube", worldLogic, 0, 10000*y+100*x+z);
+            }
+        }
     }
 }
 
@@ -128,13 +138,9 @@ G4LogicalVolume* DetectorConstruction::ConstructWLSfiber(G4double radiusMin, G4d
 {
     G4Tubs* WLSfiberSolid = new G4Tubs("WLSfiberSolid", radiusMin, radiusMax, length, 0*deg, 360*deg);
 
-    G4Element* C = materials->FindOrBuildElement("C");
-    G4Element* H = materials->FindOrBuildElement("H");
-    G4Material* WLSmat = new G4Material("WLSmat", 1.0591*g/cm3, 2);//1,4-Bis(2-methylstyryl)benzol
-    WLSmat->AddElement(C, 24);
-    WLSmat->AddElement(H, 22);
+    G4Material* Polystyrene = materials->FindOrBuildMaterial("G4_POLYSTYRENE"); //Polystyrene y-11 Kuraray
 
-	WLSfiberLogVol = new G4LogicalVolume(WLSfiberSolid, WLSmat, "WLSfiberLogVol");
+	WLSfiberLogVol = new G4LogicalVolume(WLSfiberSolid, Polystyrene, "WLSfiberLogVol");
 
 	G4VisAttributes* WLSfiberVisAtt = new G4VisAttributes( G4Colour::Green() );
 	WLSfiberVisAtt->SetForceAuxEdgeVisible(true);// Can see outline when drawn with lines
