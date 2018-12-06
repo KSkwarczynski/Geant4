@@ -13,6 +13,10 @@ set(CMAKE_BUILD_TYPE release)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
+# root
+find_package(ROOT)
+include_directories(${ROOT_INCLUDE_DIRS})
+
 add_executable(sFGD sFGD.cc ${sources} ${headers})
 target_link_libraries(sFGD ${Geant4_LIBRARIES})
-
+target_link_libraries(sFGD ${ROOT_LIBRARIES})
