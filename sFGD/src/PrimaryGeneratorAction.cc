@@ -54,10 +54,54 @@ void PrimaryGeneratorAction::GenerateProtonIncident(G4Event* anEvent){
 	particleGun->SetParticleDefinition(particle);
 
     particleGun->SetParticleDefinition(particle);
-    particleGun->SetParticlePosition(G4ThreeVector(0*cm,0*cm,1*m));
-    particleGun->SetParticleMomentumDirection( G4ThreeVector( 0, 0, 1 ) );
-    particleGun->SetParticleEnergy(2.0*MeV);
+    particleGun->SetParticlePosition(G4ThreeVector(0*cm,0*cm, 100*cm));
+    particleGun->SetParticleMomentumDirection( GenerateDirection() );
+    particleGun->SetParticleEnergy(2.0*GeV);
     particleGun->GeneratePrimaryVertex(anEvent);
 }
+
+G4ThreeVector PrimaryGeneratorAction::GenerateDirection()
+{
+    //Metoda ktora urozmaica troche kierunek wiazki
+    //Wartosci nie sa koncowe tylko wstepne
+    G4double DirectionX=0;
+    G4double DirectionY=0;
+    G4double DirectionZ=0;
+    G4double SignX=0;
+    G4double SignY=0;
+    G4double Randomization=0;
+    
+    DirectionX= G4UniformRand()/30;
+    DirectionY= G4UniformRand()/30;
+    
+    Randomization=G4UniformRand();
+    if(Randomization>0.5)
+    {
+        SignX = 1;
+    }
+    else
+    {
+        SignX = -1;
+    } 
+    
+    Randomization=G4UniformRand();
+    if(Randomization>0.5)
+    {
+        SignY = 1;
+    }
+    else
+    {
+        SignY = -1;
+    } 
+    
+    DirectionZ=1-DirectionY-DirectionX;
+    
+    return G4ThreeVector(SignX*DirectionX, SignY*DirectionY, -DirectionZ);
+}
+
+
+
+
+
 
 

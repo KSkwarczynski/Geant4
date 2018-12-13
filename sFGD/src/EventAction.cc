@@ -15,7 +15,8 @@ EventAction::EventAction()
 
 }
 
-EventAction::~EventAction(){
+EventAction::~EventAction()
+{
 
 }
 

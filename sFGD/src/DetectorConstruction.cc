@@ -63,14 +63,23 @@ G4VPhysicalVolume* DetectorConstruction::ConstructWorld()
 
 void DetectorConstruction::ConstructCube()
 {
-/////////FANTOM/////////
-    G4Material* Plastic = materials->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+   //Polystyrene doped with 1.5% paraterphenyl (PTP) 0.01% POPOP
+    //G4Element* H = man->FindOrBuildElement("H");
+    //G4Element* C = man->FindOrBuildElement("C");
+    //G4Material* PTerphenyl = new G4Material("PTerphenyl", 1.23*g/cm3, 2);
+    //water->AddElement(H, 14);
+    //water->AddElement(C, 18);
 
+    //G4Material* CubeMaterial=("CubeMaterial",2);
+    //CubeMaterial->AddMaterial(PTerphenyl,1);
+    //CubeMaterial->AddMaterial(Polystyrene,1);
+    
+    G4Material* Polystyrene = materials->FindOrBuildMaterial("G4_POLYSTYRENE"); 
     G4double xsize = 1*cm;
     G4double ysize = 1*cm;
     G4double zsize = 1*cm;
     G4Box* CubeSolid = new G4Box("CubeSolid", xsize/2, ysize/2, zsize/2);
-    CubeLogVol = new G4LogicalVolume(CubeSolid, Plastic, "CubeLogVol");
+    CubeLogVol = new G4LogicalVolume(CubeSolid, Polystyrene, "CubeLogVol");
 
     G4VisAttributes* CubeVisAtt = new G4VisAttributes( G4Colour(1,0.8,0.8));
 	CubeVisAtt->SetForceAuxEdgeVisible(true);// Can see outline when drawn with lines
