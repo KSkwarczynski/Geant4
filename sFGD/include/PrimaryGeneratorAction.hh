@@ -25,10 +25,10 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         G4ParticleGun* particleGun;
         G4ParticleTable* particleTable;
         void GenerateProtonIncident(G4Event* anEvent);
+        G4ThreeVector GenerateDirection();
 
 };
 
 
 #endif
-
 
