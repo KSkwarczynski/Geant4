@@ -19,6 +19,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAction
     particleGun = new G4ParticleGun();
     particleTable = G4ParticleTable::GetParticleTable();
 	SetUpDefault();
+    losowa = new TRandom3(0);
 }
 
 
@@ -54,53 +55,34 @@ void PrimaryGeneratorAction::GenerateProtonIncident(G4Event* anEvent){
 	particleGun->SetParticleDefinition(particle);
 
     particleGun->SetParticleDefinition(particle);
-    particleGun->SetParticlePosition(G4ThreeVector(0*cm,0*cm, 100*cm));
+    particleGun->SetParticlePosition( GenerateStartingPosition() );
     particleGun->SetParticleMomentumDirection( GenerateDirection() );
-    particleGun->SetParticleEnergy(2.0*GeV);
+    particleGun->SetParticleEnergy(100*MeV);
     particleGun->GeneratePrimaryVertex(anEvent);
 }
 
+
+
 G4ThreeVector PrimaryGeneratorAction::GenerateDirection()
 {
-    //Metoda ktora urozmaica troche kierunek wiazki
-    //Wartosci nie sa koncowe tylko wstepne
-    G4double DirectionX=0;
-    G4double DirectionY=0;
-    G4double DirectionZ=0;
-    G4double SignX=0;
-    G4double SignY=0;
-    G4double Randomization=0;
-    
-    DirectionX= G4UniformRand()/30;
-    DirectionY= G4UniformRand()/30;
-    
-    Randomization=G4UniformRand();
-    if(Randomization>0.5)
-    {
-        SignX = 1;
-    }
-    else
-    {
-        SignX = -1;
-    } 
-    
-    Randomization=G4UniformRand();
-    if(Randomization>0.5)
-    {
-        SignY = 1;
-    }
-    else
-    {
-        SignY = -1;
-    } 
-    
-    DirectionZ=1-DirectionY-DirectionX;
-    
-    return G4ThreeVector(SignX*DirectionX, SignY*DirectionY, -DirectionZ);
+    G4double randomPhi = G4UniformRand()*2*M_PI;
+    G4double randomCosTheta = G4UniformRand()*(-1);
+    G4double randomTheta = acos(randomCosTheta);
+    G4double x = sin(randomTheta)*sin(randomPhi);
+    G4double y = sin(randomTheta)*cos(randomPhi);
+    G4double z = cos(randomTheta);
+    return G4ThreeVector(x, y, z);
 }
 
-
-
+G4ThreeVector PrimaryGeneratorAction::GenerateStartingPosition()
+{
+    G4double x = losowa->Gaus( 0 , 2 );
+    G4double y = losowa->Gaus( 0 , 1 );
+    G4double z =0;
+    
+    return G4ThreeVector(x*cm, y*cm, z*cm);    
+}
+ 
 
 
 

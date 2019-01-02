@@ -9,7 +9,6 @@
 #include "G4SystemOfUnits.hh" //jednostki
 #include "G4VisAttributes.hh" //sposob wyświetlania, kolory itp
 #include "G4Material.hh" //materiały
-#include "G4NistManager.hh"  //wbudowane materiały
 #include "G4Box.hh" //prostopadłościan
 #include "G4Tubs.hh" //walec
 #include "G4ThreeVector.hh" //trzyelementowy wektor wbudowany w geant
@@ -24,6 +23,7 @@ DetectorConstruction::DetectorConstruction()
     CubeLogVol = 0L;
     WLSLogVol = 0L;
     WLSfiberLogVol = 0L;
+    KostkaSD = 0L;
     materials = G4NistManager::Instance();
 }
 
@@ -63,24 +63,27 @@ G4VPhysicalVolume* DetectorConstruction::ConstructWorld()
 
 void DetectorConstruction::ConstructCube()
 {
-   //Polystyrene doped with 1.5% paraterphenyl (PTP) 0.01% POPOP
-    //G4Element* H = man->FindOrBuildElement("H");
-    //G4Element* C = man->FindOrBuildElement("C");
-    //G4Material* PTerphenyl = new G4Material("PTerphenyl", 1.23*g/cm3, 2);
-    //water->AddElement(H, 14);
-    //water->AddElement(C, 18);
-
-    //G4Material* CubeMaterial=("CubeMaterial",2);
-    //CubeMaterial->AddMaterial(PTerphenyl,1);
-    //CubeMaterial->AddMaterial(Polystyrene,1);
+    //Polystyrene doped with 1.5% paraterphenyl (PTP) 0.01% POPOP
+    G4Element* H = materials->FindOrBuildElement("H");
+    G4Element* C = materials->FindOrBuildElement("C");
     
+    G4Material* PTerphenyl = new G4Material("PTerphenyl", 1.23*g/cm3, 2);
+    PTerphenyl->AddElement(H, 14);
+    PTerphenyl->AddElement(C, 18);
+
     G4Material* Polystyrene = materials->FindOrBuildMaterial("G4_POLYSTYRENE"); 
+
+    G4Material* CubeMaterial=new G4Material("CubeMaterial", 1.06255*g/cm3, 2);
+    CubeMaterial->AddMaterial(PTerphenyl,  98.5*perCent);
+    CubeMaterial->AddMaterial(Polystyrene, 1.5*perCent);
+    
     G4double xsize = 1*cm;
     G4double ysize = 1*cm;
     G4double zsize = 1*cm;
+    
     G4Box* CubeSolid = new G4Box("CubeSolid", xsize/2, ysize/2, zsize/2);
-    CubeLogVol = new G4LogicalVolume(CubeSolid, Polystyrene, "CubeLogVol");
-
+    CubeLogVol = new G4LogicalVolume(CubeSolid, CubeMaterial, "CubeLogVol");
+    
     G4VisAttributes* CubeVisAtt = new G4VisAttributes( G4Colour(1,0.8,0.8));
 	CubeVisAtt->SetForceAuxEdgeVisible(true);// Can see outline when drawn with lines
 	CubeLogVol->SetVisAttributes(CubeVisAtt);
@@ -120,7 +123,7 @@ void DetectorConstruction::ConstructCube()
             for(int z = 0; z< nrOfDetsZ; ++z)
             {
                 G4ThreeVector Cubepos( (x*1-12/(optymalization) )*cm, (y*1-4/(optymalization) )*cm, -z*1*cm );
-                new G4PVPlacement(0, Cubepos, CubeLogVol, "Cube", worldLogic, 0, 10000*y+100*x+z);
+                new G4PVPlacement(0, Cubepos, CubeLogVol, "Cube", worldLogic, 0, 100000+1 00 00*y+100*x+z);
             }
         }
     }
@@ -160,6 +163,16 @@ G4LogicalVolume* DetectorConstruction::ConstructWLSfiber(G4double radiusMin, G4d
 
 void DetectorConstruction::ConstructSDandField()
 {
-//pozniej beda tu detektory
+    G4SDManager* SDmanager = G4SDManager::GetSDMpointer();
+
+    
+    if (!KostkaSD)
+    {
+        KostkaSD = new CubeSD("KostkaSD");//konstruktor
+    }
+
+    SDmanager->AddNewDetector(KostkaSD);//rejestracja w G4SDManager
+    CubeLogVol->SetSensitiveDetector(KostkaSD); //przypisanie do log vol
+    
 }
 
