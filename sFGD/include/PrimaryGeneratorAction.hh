@@ -10,6 +10,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
+#include "TRandom3.h"
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
@@ -24,8 +25,10 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         void SetUpDefault();
         G4ParticleGun* particleGun;
         G4ParticleTable* particleTable;
+        TRandom3 * losowa;
         void GenerateProtonIncident(G4Event* anEvent);
         G4ThreeVector GenerateDirection();
+        G4ThreeVector GenerateStartingPosition();
 
 };
 

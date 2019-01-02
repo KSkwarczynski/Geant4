@@ -10,10 +10,13 @@ class OutputFile
     public:
     OutputFile(std::string fileName);
    ~OutputFile();
+   void AddEntry(double energy, int cubeNum);
 
 private:
    TFile* outputFile;
    TTree* ProtonTree;
+   double enDep;
+   int CubeNumber;
 
 };
 #endif

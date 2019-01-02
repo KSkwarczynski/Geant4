@@ -8,6 +8,7 @@
 
 #include "G4UserEventAction.hh"
 #include "G4Event.hh"
+#include "OutputFile.hh"
 #include <fstream>
 
 class EventAction : public G4UserEventAction
@@ -18,7 +19,9 @@ class EventAction : public G4UserEventAction
 
     virtual void BeginOfEventAction(const G4Event*);
     virtual void EndOfEventAction(const G4Event*);
+    
   private:
+      OutputFile* PlikZapisu;
 
 
 };

@@ -7,7 +7,7 @@
 class CubeHit : public G4VHit
 {
 public:
-    CubeHit( );
+    CubeHit(G4double enDep, G4int CubeNumber);
     virtual ~CubeHit();
     //konstruktor kopiujący
     CubeHit(const CubeHit &right);
@@ -20,8 +20,12 @@ public:
     inline void operator delete(void *aHit);
 
     
-    private:
-
+    G4double GetEnDep(){return enDep;}
+    G4int GetCubeNumber(){return CubeNumber;}
+private:
+    G4double enDep;
+    G4int CubeNumber;
+    
 };
 
 

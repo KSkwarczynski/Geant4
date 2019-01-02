@@ -11,6 +11,8 @@ public:
     virtual void Initialize(G4HCofThisEvent* );
     virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* );
 private:
+    G4double GetEnDep(G4Step* aStep);
+    G4int GetCubeNumber(G4Step* aStep);
     CubeHitsCollection* CubeHitKolekcja;
 
 };
