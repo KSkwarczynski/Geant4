@@ -8,4 +8,4 @@ make
 ./sFGD
 
 
-RootFileReconstruction.cc creates plots neccesary to analisis from symulation.
+RootFileReconstruction.cc creates plots neccesary to analysis from symulation.
