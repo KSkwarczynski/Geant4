@@ -6,3 +6,6 @@ then enter build (cd build)
 cmake ../
 make
 ./sFGD
+
+
+RootFileReconstruction.cc creates plots neccesary to analisis from symulation.
