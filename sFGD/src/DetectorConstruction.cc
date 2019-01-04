@@ -111,7 +111,7 @@ void DetectorConstruction::ConstructCube()
 
     G4ThreeVector HolePos3(0, -1.5*mm, -1.5*mm);
     new G4PVPlacement(RotY, HolePos3, HoleLog, "Hole", CubeLogVol, 0, 2);
-    int optymalization=4; //default equals 1, decrease nr. of cubes for optymalization
+    int optymalization=1; //default equals 1, decrease nr. of cubes for optymalization
     int nrOfDetsZ=48;
     int nrOfDetsX=24/optymalization;
     int nrOfDetsY=8/optymalization;    // 9216 cubes: 48 x 24 x 8 (depth, width, height).
