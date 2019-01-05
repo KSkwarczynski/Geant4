@@ -113,10 +113,22 @@ void RootFileReconstruction(){
         event_XZ[ih]->GetYaxis()->SetTitle("Z axis");
         event_XZ[ih]->GetXaxis()->SetTitle("X axis");
     }
-    
+    TH1F *energy_Z[Eventy];
+    for (Int_t ih=0; ih < Eventy;ih++)
+    {
+        sEventnum.str("");
+        sEventnum << ih;
+        sEvent = "energy_Z_"+sEventnum.str();
+        energy_Z[ih] = new TH1F(sEvent.c_str(),sEvent.c_str(),48,0,48);
+        energy_Z[ih]->GetYaxis()->SetTitle("Energy deposit [p.e.]");
+        energy_Z[ih]->GetXaxis()->SetTitle("Z axis");
+    }
     int StepEventy = StepByStepTree->GetEntries();
     int NumerObecnegoEventu=0;
     int StepCounterInLoop=0;
+    
+    double energyDepZ[48]={};
+     
     for(int i=0; i<StepEventy ; i++)
     //for(int i=0; i<7000 ; i++)
     {
@@ -126,6 +138,11 @@ void RootFileReconstruction(){
         {
             StepCounterInLoop=0;
             NumerObecnegoEventu++;
+            for(int ik = 0; ik < 48; ik++ )
+            {
+                energy_Z[NumerObecnegoEventu]->Fill(ik,energyDepZ[ik]);
+                energyDepZ[ik]=0;
+            }
         }
         
         int NumerPomocniczy=0;
@@ -153,6 +170,8 @@ void RootFileReconstruction(){
         event_YZ[NumerObecnegoEventu]->Fill( CubeNumberZ[0], CubeNumberY[0],enDepStep );
         event_XZ[NumerObecnegoEventu]->Fill( CubeNumberX[0], CubeNumberZ[0],enDepStep );
         
+        energyDepZ[CubeNumberZ[0]]+=enDepStep;
+        
         StepCounterInLoop++;
     }
     
@@ -172,21 +191,23 @@ void RootFileReconstruction(){
         event_XY[iEvent]-> Draw("colorz");
         
         DisplayCanvas -> cd(4);
-        event_XY[iEvent]-> Draw("colorz");
+        energy_Z[iEvent]-> Draw("HIST");
         
         DisplayCanvas->Update();
         events2D -> cd();
 
         DisplayCanvas->Write();
-        
     }
-    
+        
     plik->cd();
     h_EnergyDeposit->Write();
     h_StoppinPositionX->Write();
     h_StoppinPositionY->Write();
     h_StoppinPositionZ->Write();
     
+    fileTree->Close();
+    
     plik->Close();
+    
     delete plik;
 }
