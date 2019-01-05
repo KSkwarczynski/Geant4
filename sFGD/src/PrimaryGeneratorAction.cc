@@ -76,7 +76,7 @@ G4ThreeVector PrimaryGeneratorAction::GenerateDirection()
 
 G4ThreeVector PrimaryGeneratorAction::GenerateStartingPosition()
 {
-    G4double x = losowa->Gaus( 0 , 2 );
+    G4double x = losowa->Gaus( 0 , 4 );
     G4double y = losowa->Gaus( 0 , 1 );
     G4double z =0;
     
