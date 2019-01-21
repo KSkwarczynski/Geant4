@@ -29,16 +29,18 @@ void RootFileReconstruction(){
     StepByStepTree->SetBranchAddress("enDepStep", &enDepStep);
     StepByStepTree->SetBranchAddress("CubeNumberStep", &CubeNumberStep);
     
+    TFile* plik = new TFile("StoppingProtonReconstructed.root","RECREATE");
     
-    TFile *plik = new TFile("StoppingProtonReconstructed.root","RECREATE");
+    TH1F* h_EnergyDeposit = new TH1F("EnergyDepositHist", "Energy Depostied by a stopping proton", 150, 0, 150);
     
-    TH1F *h_EnergyDeposit = new TH1F("EnergyDepositHist", "Energy Depostied by a stopping proton", 150, 0, 150);
+    TH1F* h_StepCounter = new TH1F("h_StepCounter", "Number of steps in one event", 1000, 0, 1000);
     
-    TH1F *h_StepCounter = new TH1F("h_StepCounter", "Number of steps in one event", 1000, 0, 1000);
+    TH1F* h_StoppinPositionX = new TH1F("StoppinPositionX", "Stoppin Position X", 24, 0, 24);
+    TH1F* h_StoppinPositionY = new TH1F("StoppinPositionY", "Stoppin Position Y", 8, 0, 8);
+    //TH1F* h_StoppinPositionZ = new TH1F("StoppinPositionZ", "Stoppin Position Z", 48, 0, 48);
     
-    TH1F *h_StoppinPositionX = new TH1F("StoppinPositionX", "Stoppin Position X", 24, 0, 24);
-    TH1F *h_StoppinPositionY = new TH1F("StoppinPositionY", "Stoppin Position Y", 8, 0, 8);
-    TH1F *h_StoppinPositionZ = new TH1F("StoppinPositionZ", "Stoppin Position Z", 48, 0, 48);
+    TH1F* h_RealPeakNumberZ = new TH1F("h_RealPeakNumberZ", "Position of stopping proton", 48, 0, 48);
+    TH1F* h_RealPeakEnergyZ = new TH1F("h_RealPeakEnergyZ", "Energy of stopping proton", 200, 0, 200);
     
     TDirectory *events2D = plik->mkdir("events2D");
     TCanvas *DisplayCanvas = new TCanvas("DisplayCanvas","DisplayCanvas", 1400, 1000);
@@ -73,9 +75,10 @@ void RootFileReconstruction(){
         
         CubeNumberY[0]=Numer_String[1]-'0';
         
-        h_StoppinPositionZ->Fill(CubeNumberZ[0]);
+        //h_StoppinPositionZ->Fill(CubeNumberZ[0]);
         h_StoppinPositionX->Fill(CubeNumberX[0]);
         h_StoppinPositionY->Fill(CubeNumberY[0]);
+       
         liczbaStepow[i]=StepNumber;
     }
 
@@ -120,7 +123,7 @@ void RootFileReconstruction(){
         sEventnum << ih;
         sEvent = "energy_Z_"+sEventnum.str();
         energy_Z[ih] = new TH1F(sEvent.c_str(),sEvent.c_str(),48,0,48);
-        energy_Z[ih]->GetYaxis()->SetTitle("Energy deposit [p.e.]");
+        energy_Z[ih]->GetYaxis()->SetTitle("Energy deposit [MeV]");
         energy_Z[ih]->GetXaxis()->SetTitle("Z axis");
     }
     int StepEventy = StepByStepTree->GetEntries();
@@ -128,7 +131,13 @@ void RootFileReconstruction(){
     int StepCounterInLoop=0;
     
     double energyDepZ[48]={};
-     
+
+    double PeakEnergy=0;
+    int PeakNumber=0;
+
+    double RealPeakEnergy=0;
+    int RealPeakNumber=0;
+    
     for(int i=0; i<StepEventy ; i++)
     //for(int i=0; i<7000 ; i++)
     {
@@ -136,13 +145,61 @@ void RootFileReconstruction(){
         
         if(StepCounterInLoop==liczbaStepow[NumerObecnegoEventu])
         {
-            StepCounterInLoop=0;
-            NumerObecnegoEventu++;
             for(int ik = 0; ik < 48; ik++ )
             {
                 energy_Z[NumerObecnegoEventu]->Fill(ik,energyDepZ[ik]);
+                if(energyDepZ[ik]>PeakEnergy)
+                {
+                    PeakEnergy=energyDepZ[ik];
+                    PeakNumber=ik;
+                }
+            }
+            RealPeakEnergy=PeakEnergy;
+            RealPeakNumber=PeakNumber;
+            if(PeakNumber+1!=48)
+            {
+                for(int ik = PeakNumber+1; ik < 48; ik++ )
+                {
+                    if(energyDepZ[ik]>RealPeakEnergy*0.75)
+                    {
+                        RealPeakEnergy=energyDepZ[ik];
+                        RealPeakNumber=ik;
+                    }
+                }
+            }
+            h_RealPeakNumberZ->Fill(RealPeakNumber);
+            h_RealPeakEnergyZ->Fill(RealPeakEnergy);
+            
+            DisplayCanvas->Clear();
+            DisplayCanvas->Divide(2,2);
+        
+            DisplayCanvas -> cd(1);
+            event_XZ[NumerObecnegoEventu]-> Draw("colorz");
+
+            DisplayCanvas -> cd(2);
+            event_YZ[NumerObecnegoEventu]-> Draw("colorz");
+
+            DisplayCanvas -> cd(3);
+            event_XY[NumerObecnegoEventu]-> Draw("colorz");
+        
+            DisplayCanvas -> cd(4);
+            energy_Z[NumerObecnegoEventu]-> Draw("HIST");
+        
+            DisplayCanvas->Update();
+            events2D -> cd();
+
+            DisplayCanvas->Write();
+            
+            delete event_XZ[NumerObecnegoEventu];
+            delete event_YZ[NumerObecnegoEventu];
+            delete event_XY[NumerObecnegoEventu];
+            delete energy_Z[NumerObecnegoEventu];
+            for(int ik = 0; ik < 48; ik++ )
+            {
                 energyDepZ[ik]=0;
             }
+            StepCounterInLoop=0;
+            NumerObecnegoEventu++;
         }
         
         int NumerPomocniczy=0;
@@ -174,36 +231,15 @@ void RootFileReconstruction(){
         
         StepCounterInLoop++;
     }
-    
-    for(int iEvent=0; iEvent<Eventy ; iEvent++)
-    //for(int iEvent=0; iEvent<15 ; iEvent++)
-    {
-        DisplayCanvas->Clear();
-        DisplayCanvas->Divide(2,2);
-        
-        DisplayCanvas -> cd(1);
-        event_XZ[iEvent]-> Draw("colorz");
 
-        DisplayCanvas -> cd(2);
-        event_YZ[iEvent]-> Draw("colorz");
-
-        DisplayCanvas -> cd(3);
-        event_XY[iEvent]-> Draw("colorz");
-        
-        DisplayCanvas -> cd(4);
-        energy_Z[iEvent]-> Draw("HIST");
-        
-        DisplayCanvas->Update();
-        events2D -> cd();
-
-        DisplayCanvas->Write();
-    }
-        
     plik->cd();
     h_EnergyDeposit->Write();
     h_StoppinPositionX->Write();
     h_StoppinPositionY->Write();
-    h_StoppinPositionZ->Write();
+    //h_StoppinPositionZ->Write();
+    
+    h_RealPeakNumberZ->Write();
+    h_RealPeakEnergyZ->Write();
     
     fileTree->Close();
     
