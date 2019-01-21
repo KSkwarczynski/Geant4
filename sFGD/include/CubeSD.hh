@@ -13,8 +13,9 @@ public:
 private:
     G4double GetEnDep(G4Step* aStep);
     G4int GetCubeNumber(G4Step* aStep);
+    //G4int GetIndex(G4Step* aStep, int depth);
+    G4int GetIndex(G4Step* aStep);
     CubeHitsCollection* CubeHitKolekcja;
-
 };
 
 #endif

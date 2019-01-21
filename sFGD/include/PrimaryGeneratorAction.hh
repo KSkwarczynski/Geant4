@@ -29,7 +29,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         void GenerateProtonIncident(G4Event* anEvent);
         G4ThreeVector GenerateDirection();
         G4ThreeVector GenerateStartingPosition();
-
+        G4double GenerateEnergy();
 };
 
 

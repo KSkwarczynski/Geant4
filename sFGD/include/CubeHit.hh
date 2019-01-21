@@ -22,6 +22,7 @@ public:
     
     G4double GetEnDep(){return enDep;}
     G4int GetCubeNumber(){return CubeNumber;}
+    //G4int GetIndex(){return CubeNumber;}
 private:
     G4double enDep;
     G4int CubeNumber;

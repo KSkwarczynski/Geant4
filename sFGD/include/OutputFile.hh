@@ -8,15 +8,22 @@
 class OutputFile 
 {
     public:
-    OutputFile(std::string fileName);
-   ~OutputFile();
-   void AddEntry(double energy, int cubeNum);
+        OutputFile(std::string fileName);
+        ~OutputFile();
+        void AddEntry(double energy, int cubeNum, int stepNum);
+        void AddEntryStep(double energyStep, int cubeNumStep);
 
-private:
-   TFile* outputFile;
-   TTree* ProtonTree;
-   double enDep;
-   int CubeNumber;
-
+    private:
+        TFile* outputFile;
+   
+        TTree* ProtonTree;
+        TTree* StepByStepTree;
+   
+        double enDep;
+        int CubeNumber;
+        int StepNumber;
+   
+        double enDepStep;
+        int CubeNumberStep;
 };
 #endif
