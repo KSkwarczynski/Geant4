@@ -42,3 +42,10 @@ G4int CubeSD::GetCubeNumber(G4Step* aStep)
     G4int copyNo=0;
     return copyNo = theTouchable->GetVolume()->GetCopyNo();
 }
+
+//G4int CubeSD::GetIndex(G4Step* aStep, int depth)
+//G4int CubeSD::GetIndex(G4Step* aStep)
+//{
+  //  G4int copyNr = aStep -> GetPostStepPoint()->GetTouchable()->GetReplicaNumber(2);
+    //return copyNr;
+//}

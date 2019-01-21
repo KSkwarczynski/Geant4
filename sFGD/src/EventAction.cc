@@ -14,7 +14,7 @@
 
 EventAction::EventAction()
 {
-    PlikZapisu = new OutputFile("home/kamil/Pulpit/Geant/sFGD/StoppingProton.root");
+    PlikZapisu = new OutputFile("StoppingProton.root");
 }
 
 EventAction::~EventAction()
@@ -42,18 +42,22 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     //wyciagamy kolekcje kregoslupowa
     CubeHitsCollection* CubeHitColl = (CubeHitsCollection*)( hitsCollOfThisEvent->GetHC(CubePolystyreneId) );
     
-    G4int size = CubeHitColl->entries();
-    //std::cout << "evnt " << eventID << " " << "size " << size << " ";
+    int Size = CubeHitColl->entries();
     G4double energyDepInEvent = 0;
     G4int CubeNumber = 0;
-    for(G4int i=0; i!=size; i++)
+    for(G4int i=0; i!=Size; i++)
     {
          G4double energyDep = (*CubeHitColl)[i]->GetEnDep();
          energyDepInEvent +=energyDep;
+         
          CubeNumber = (*CubeHitColl)[i]->GetCubeNumber();
+         //CubeNumber = (*CubeHitColl)[i]->GetIndex();
+         
+         
+         PlikZapisu->AddEntryStep(energyDep,CubeNumber);
     }
     
-    PlikZapisu->AddEntry(energyDepInEvent, CubeNumber);
+    PlikZapisu->AddEntry(energyDepInEvent, CubeNumber, Size);
     
     if( eventID % 10 == 0 )
     {

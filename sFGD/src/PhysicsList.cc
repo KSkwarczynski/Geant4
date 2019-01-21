@@ -8,7 +8,6 @@
 #include "EMPhysics.hh"
 #include "G4SystemOfUnits.hh"
 
-
 PhysicsList::PhysicsList() : G4VModularPhysicsList()
 {
   // default cut value  (1.0mm)
@@ -19,18 +18,19 @@ PhysicsList::PhysicsList() : G4VModularPhysicsList()
 
   // EM Physics
   RegisterPhysics( new EMPhysics("standard EM"));
+
 }
 
 
 PhysicsList::~PhysicsList() {}
 
 
-void PhysicsList::SetCuts(){
+void PhysicsList::SetCuts()
+{
   //  " G4VUserPhysicsList::SetCutsWithDefault" method sets
   //   the default cut value for all particle types
   SetCutsWithDefault();
 }
-
 
 
 

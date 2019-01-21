@@ -30,5 +30,3 @@ G4int CubeHit::operator==(const CubeHit &right) const
     return (this==&right) ? 1 : 0;
 }
 
-
-

@@ -57,7 +57,7 @@ void PrimaryGeneratorAction::GenerateProtonIncident(G4Event* anEvent){
     particleGun->SetParticleDefinition(particle);
     particleGun->SetParticlePosition( GenerateStartingPosition() );
     particleGun->SetParticleMomentumDirection( GenerateDirection() );
-    particleGun->SetParticleEnergy(100*MeV);
+    particleGun->SetParticleEnergy( GenerateEnergy() );
     particleGun->GeneratePrimaryVertex(anEvent);
 }
 
@@ -65,8 +65,9 @@ void PrimaryGeneratorAction::GenerateProtonIncident(G4Event* anEvent){
 
 G4ThreeVector PrimaryGeneratorAction::GenerateDirection()
 {
-    G4double randomPhi = G4UniformRand()*2*M_PI;
-    G4double randomCosTheta = G4UniformRand()*(-1);
+    G4double randomPhi = losowa -> Uniform(0, 2)*M_PI;
+    //G4double randomPhi=1*M_PI;
+    G4double randomCosTheta = losowa -> Uniform(-1, -0.998);
     G4double randomTheta = acos(randomCosTheta);
     G4double x = sin(randomTheta)*sin(randomPhi);
     G4double y = sin(randomTheta)*cos(randomPhi);
@@ -83,7 +84,22 @@ G4ThreeVector PrimaryGeneratorAction::GenerateStartingPosition()
     return G4ThreeVector(x*cm, y*cm, z*cm);    
 }
  
+G4double PrimaryGeneratorAction::GenerateEnergy()
+{
+    G4double Energy=0;
+    double propability = losowa->Uniform(100);
+    
+    if(propability >= 50)
+    {
+        Energy=200*MeV;
+    }
 
+    if(propability < 50)
+    {
+        Energy=100*MeV;
+    }
+    return Energy;
+}
 
 
 
